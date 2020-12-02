@@ -13,21 +13,23 @@ const pages: string[] = [
 	"https://images.unsplash.com/photo-1602183245419-82ae4ff801d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80",
 ];
 
-export function App() {
+export const App: React.FC = () => {
 	const clamp = (num: number, clamp: number, higher: number): number => {
-		return higher ? Math.min(Math.max(num, clamp), higher) : Math.min(num, clamp);
+		return higher
+			? Math.min(Math.max(num, clamp), higher)
+			: Math.min(num, clamp);
 	};
 
-	const index = React.useRef(0);
+	const index = React.useRef<number>(0);
 	const [props, set] = useSprings(pages.length, (i) => ({
 		x: i * window.innerWidth,
 		scale: 1,
 		display: "block",
 	}));
 	const bind = useDrag(
-		({ active, movement: [mx], direction: [xDir], distance, cancel }) => {
-			if (active && distance > window.innerWidth / 2)
-				cancel: void(
+		({ down, movement: [mx], direction: [xDir], distance, cancel }) => {
+			if (down && distance > window.innerWidth / 6)
+				cancel(
 					(index.current = clamp(
 						index.current + (xDir > 0 ? -1 : 1),
 						0,
@@ -37,15 +39,37 @@ export function App() {
 			set((i) => {
 				if (i < index.current - 1 || i > index.current + 1)
 					return { display: "none" };
-				const x = (i - index.current) * window.innerWidth + (active ? mx : 0);
-				const scale = active ? 1 - distance / window.innerWidth / 2 : 1;
+				const x = (i - index.current) * window.innerWidth + (down ? mx : 0);
+				const scale = down ? 1 - distance / window.innerWidth / 2 : 1;
 				return { x, scale, display: "block" };
 			});
 		}
 	);
-	return props.map(({ x, display, scale }, i) => (
-		<animated.div {...bind()} key={i} style={{ display, x }}>
-			<animated.div style={{ scale, backgroundImage: `url(${pages[i]})` }} />
-		</animated.div>
-	));
-}
+	return (
+		<>
+			{props.map(({ x, display, scale }, i) => (
+				<animated.div
+					{...bind()}
+					key={i}
+					style={{ display, x } as any}
+					className='slider'
+				>
+					<animated.div
+						style={{ scale, backgroundImage: `url(${pages[i]})` } as any}
+						className='slider-item'
+					/>
+				</animated.div>
+			))}
+			<div className='text'>
+				<h4>Лес</h4>
+				<ul>
+					<li>
+						Множество дикорастущих деревьев, расположенных на большом
+						пространстве; пространство, обильно проросшее деревьями.
+					</li>
+					<li>Большое количество, множетсва (о вызвышающихся предметах).</li>
+				</ul>
+			</div>
+		</>
+	);
+};
