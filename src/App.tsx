@@ -2,6 +2,7 @@ import React from "react";
 
 import { useSprings, animated } from "react-spring";
 import { useDrag } from "react-use-gesture";
+import { useFela } from "react-fela";
 
 import "./index.css";
 
@@ -13,12 +14,15 @@ const pages: string[] = [
 	"https://images.unsplash.com/photo-1602183245419-82ae4ff801d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80",
 ];
 
+
 export const App: React.FC = () => {
 	const clamp = (num: number, clamp: number, higher: number): number => {
 		return higher
 			? Math.min(Math.max(num, clamp), higher)
 			: Math.min(num, clamp);
 	};
+
+	const { css } = useFela();
 
 	const index = React.useRef<number>(0);
 	const [props, set] = useSprings(pages.length, (i) => ({
@@ -52,15 +56,16 @@ export const App: React.FC = () => {
 					{...bind()}
 					key={i}
 					style={{ display, x } as any}
-					className='slider'
+					className={css(slider)}
 				>
 					<animated.div
 						style={{ scale, backgroundImage: `url(${pages[i]})` } as any}
-						className='slider-item'
+						className={css(sliderItem)}
 					/>
 				</animated.div>
 			))}
-			<div className='text'>
+
+			<div className={css(text)} >
 				<h4>Лес</h4>
 				<ul>
 					<li>
@@ -73,3 +78,48 @@ export const App: React.FC = () => {
 		</>
 	);
 };
+
+const slider = () => ({
+	position: 'absolute',
+	width: '100vw',
+	height: '100vh',
+	willChange: 'transform',
+	zIndex: 1
+} as any);
+
+const sliderItem = () => ({
+	zIndex: 1,
+	backgroundSize: 'cover',
+	backgroundRepeat: 'no-repeat',
+	backgroundPosition: 'center center',
+	width: '100%',
+	height: '100%',
+	willChange: 'transform',
+	boxShadow: '0 62.5px 125px -25px rgba(50, 50, 73, 0.5), 0 37.5px 75px -37.5px rgba(0, 0, 0, 0.6)'
+} as any);
+
+const text = () => ({
+	marginTop: '100px',
+	marginLeft: '50px',
+	zIndex: 10,
+	position: 'relative',
+	color: '#fff',
+	pointerEvents: 'none',
+	'> h4': {
+		fontSize: '30px',
+		color: '#fff',
+		margin: 0,
+		padding: 0
+	},
+	'> ul': {
+		listStyleType: 'decimal',
+		marginTop: '20px',
+		maxWidth: '780px',
+		'> li': {
+			fontSize: '18px',
+			lineHeight: 1.6,
+			marginBottom: '20px',
+			padddingLeft: '10px'
+		}
+	}
+} as any);
