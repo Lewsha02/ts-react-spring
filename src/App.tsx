@@ -2,7 +2,7 @@ import React from "react";
 
 import { useSprings, animated } from "react-spring";
 import { useDrag } from "react-use-gesture";
-import { useFela } from "react-fela";
+import { useFela, CssFelaStyle } from "react-fela";
 
 import "./index.css";
 
@@ -14,14 +14,13 @@ const pages: string[] = [
 	"https://images.unsplash.com/photo-1602183245419-82ae4ff801d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80",
 ];
 
+const clamp = (num: number, clamp: number, higher: number): number => {
+	return higher
+		? Math.min(Math.max(num, clamp), higher)
+		: Math.min(num, clamp);
+};
 
 export const App: React.FC = () => {
-	const clamp = (num: number, clamp: number, higher: number): number => {
-		return higher
-			? Math.min(Math.max(num, clamp), higher)
-			: Math.min(num, clamp);
-	};
-
 	const { css } = useFela();
 
 	const index = React.useRef<number>(0);
@@ -79,15 +78,15 @@ export const App: React.FC = () => {
 	);
 };
 
-const slider = () => ({
+const slider: CssFelaStyle<{}, {}> = () => ({
 	position: 'absolute',
 	width: '100vw',
 	height: '100vh',
 	willChange: 'transform',
 	zIndex: 1
-} as any);
+});
 
-const sliderItem = () => ({
+const sliderItem: CssFelaStyle<{}, {}> = () => ({
 	zIndex: 1,
 	backgroundSize: 'cover',
 	backgroundRepeat: 'no-repeat',
@@ -96,9 +95,9 @@ const sliderItem = () => ({
 	height: '100%',
 	willChange: 'transform',
 	boxShadow: '0 62.5px 125px -25px rgba(50, 50, 73, 0.5), 0 37.5px 75px -37.5px rgba(0, 0, 0, 0.6)'
-} as any);
+});
 
-const text = () => ({
+const text: CssFelaStyle<{}, {}> = () => ({
 	marginTop: '100px',
 	marginLeft: '50px',
 	zIndex: 10,
@@ -122,4 +121,4 @@ const text = () => ({
 			padddingLeft: '10px'
 		}
 	}
-} as any);
+});
